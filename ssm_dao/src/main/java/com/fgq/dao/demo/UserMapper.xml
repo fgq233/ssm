@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fgq.dao.demo.UserMapper">
+
+      <!--基本查询-->
+      <select id="findUserByName" parameterType="String" resultType="com.fgq.domain.user.SysUser">
+          select ID, LOGIN_NAME, LOGIN_PWD, DEFAULT_ORGAN_ID, CJSJ from sys_user
+          where  LOGIN_NAME = #{aaaaa}
+      </select>
+
+        <!--模糊查询-->
+        <select id="findUserLikeName" parameterType="String" resultType="com.fgq.domain.user.SysUser">
+          select ID, LOGIN_NAME, LOGIN_PWD, DEFAULT_ORGAN_ID, CJSJ from sys_user
+          where  LOGIN_NAME like '%${value}%' and ROWNUM = 1
+        </select>
+
+        <!--插入-->
+        <insert id="addUser" parameterType="com.fgq.domain.user.SysUser">
+          <!-- 获取自增主键-->
+            <selectKey keyProperty="id" resultType="long" order="BEFORE">
+                select seq_sys_user.nextval from dual
+            </selectKey>
+          insert into sys_user(ID, LOGIN_NAME, LOGIN_PWD, DEFAULT_ORGAN_ID, CJSJ)
+                 values(#{id}, #{login_name}, #{login_pwd}, #{default_organ_id}, sysdate)
+        </insert>
+
+        <!--删除-->
+        <delete id="deleteUser" parameterType="long">
+              delete from sys_user where id = #{aaaaa}
+        </delete>
+
+        <!--更新-->
+        <update id="updateUser" parameterType="com.fgq.domain.user.SysUser">
+              update sys_user set LOGIN_NAME = #{login_name} where id = #{id}
+        </update>
+
+
+    <!--集合查询1-->
+     <select id="findUserbyIds1" parameterType="com.fgq.domain.user.UserEx" resultType="com.fgq.domain.user.SysUser">
+          select * from sys_user
+          <where>
+              <if test="ids!=null and ids.size>0">
+                  <foreach collection="ids" item="id" open="id in(" close=")" separator=",">
+                      ${id}
+                  </foreach>
+              </if>
+          </where>
+     </select>
+
+    <!--集合查询2-->
+    <select id="findUserbyIds2" parameterType="java.util.List" resultType="com.fgq.domain.user.SysUser">
+        select * from sys_user
+        <where>
+            <if test="list!=null and list.size>0">
+                <foreach collection="list" item="id" open="id in(" close=")" separator=",">
+                    ${id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

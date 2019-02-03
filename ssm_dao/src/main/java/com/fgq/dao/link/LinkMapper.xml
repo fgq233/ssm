@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fgq.dao.link.LinkeMapper">
+
+
+        <!--一对一-->
+      <select id="getUses"  resultMap="resultMap1">
+          select u.id, u.login_name, u.login_pwd, u.default_organ_id, u.cjsj,
+           o.id as oid, o.organ_name, o.cjsj as organCjsj
+           from sys_user u left join sys_organ o
+           on u.default_organ_id = o.id
+      </select>
+
+      <resultMap id="resultMap1" type="com.fgq.domain.user.SysUser">
+          <!--向 SysUser匹配数据-->
+          <id property="id" column="id" />
+          <result property="login_name" column="login_name"/>
+          <result property="login_pwd" column="login_pwd"/>
+          <result property="default_organ_id" column="default_organ_id"/>
+          <result property="cjsj" column="cjsj"/>
+
+          <!-- 向 SysOrgan匹配数据-->
+          <association property="organ" javaType="com.fgq.domain.organ.SysOrgan">
+                <id property="id" column="oid" />
+                <result property="jgmc" column="organ_name"/>
+                <result property="cjsj" column="organCjsj"/>
+          </association>
+      </resultMap>
+
+
+
+
+
+
+    <!-- 一对多-->
+    <select id="getOrganUsers"  resultMap="resultMap2">
+          select u.id, u.login_name, u.login_pwd, u.default_organ_id, u.cjsj,
+           o.id as oid, o.organ_name, o.cjsj as organCjsj
+           from sys_organ o left join sys_user u
+           on u.default_organ_id = o.id
+      </select>
+
+    <resultMap id="resultMap2" type="com.fgq.domain.organ.SysOrgan">
+        <!--向 SysOrgan匹配数据-->
+        <id property="id" column="oid" />
+        <result property="jgmc" column="organ_name"/>
+        <result property="cjsj" column="organCjsj"/>
+
+        <!-- 向 List<SysUser>匹配数据-->
+        <collection property="userList" ofType="com.fgq.domain.user.SysUser">
+            <id property="id" column="id" />
+            <result property="login_name" column="login_name"/>
+            <result property="login_pwd" column="login_pwd"/>
+            <result property="default_organ_id" column="default_organ_id"/>
+            <result property="cjsj" column="cjsj"/>
+        </collection>
+    </resultMap>
+
+
+
+
+
+</mapper>
